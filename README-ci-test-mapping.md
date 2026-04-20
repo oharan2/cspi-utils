@@ -50,7 +50,7 @@ Create a new directory:
 
 ### `component.go`
 
-Model it on [pkg/components/fusionaccesslpinterop/component.go](../../pkg/components/fusionaccesslpinterop/component.go):
+Model it on [pkg/components/myproductlpinterop/component.go](../../pkg/components/myproductlpinterop/component.go):
 
 - Set `Name` and `DefaultJiraComponent` to your product’s Jira component name (often aligned with the suite, e.g. `MyProduct-lp-interop`).
 - Use a matcher that claims **all tests in your suite**:
@@ -59,13 +59,11 @@ Model it on [pkg/components/fusionaccesslpinterop/component.go](../../pkg/compon
   Matchers: []config.ComponentMatcher{{Suite: "MyProduct-lp-interop"}},
   ```
 
-- Implement `IdentifyTest`, `StableID`, and `JiraComponents` the same way as the fusion-access example: return ownership when `FindMatch` hits; use `TestRenames` in `StableID` if tests are renamed; list Jira components in `JiraComponents`.
-
 If you need finer-grained ownership later, add more `ComponentMatcher` entries (substrings, priorities, per-matcher Jira components) using patterns from [pkg/components/example](../../pkg/components/example).
 
 ### `capabilities.go`
 
-Add a `capabilities.go` next to `component.go`, modeled on [pkg/components/fusionaccesslpinterop/capabilities.go](../../pkg/components/fusionaccesslpinterop/capabilities.go). It should define `identifyCapabilities` and start from `util.DefaultCapabilities(test)`; extend the returned slice only when you need capabilities beyond the defaults.
+Add a `capabilities.go` next to `component.go`, modeled on [pkg/components/myproductlpinterop/capabilities.go](../../pkg/components/myproductlpinterop/capabilities.go). It should define `identifyCapabilities` and start from `util.DefaultCapabilities(test)`; extend the returned slice only when you need capabilities beyond the defaults.
 
 ```go
 package myproductlpinterop
@@ -112,9 +110,11 @@ The string passed to `Register` is the **component name** used in mappings; it s
 
 ## Quick checklist
 
-- [ ] `includeSuites` in `config/openshift-eng.yaml`
-- [ ] `pkg/components/<package>/component.go` with `Suite: "MyProduct-lp-interop"`
-- [ ] `pkg/components/<package>/capabilities.go` (`identifyCapabilities` + `util.DefaultCapabilities`, as in [fusionaccesslpinterop/capabilities.go](../../pkg/components/fusionaccesslpinterop/capabilities.go))
-- [ ] Import + `r.Register(...)` in `pkg/registry/registry.go`
-- [ ] Jira component exists / `jira-verify` clean
-- [ ] Run **`make mapping`** (required)
+| Step | Location | Action |
+|------|----------|--------|
+| 1 | `config/openshift-eng.yaml` | Add suite to `includeSuites` (alphabetically with other `*-lp-interop` entries) |
+| 2 | `pkg/components/<package>/component.go` | Component with matcher `Suite: "MyProduct-lp-interop"` |
+| 3 | `pkg/components/<package>/capabilities.go` | `identifyCapabilities` + `util.DefaultCapabilities` (see [myproductlpinterop/capabilities.go](../../pkg/components/myproductlpinterop/capabilities.go)) |
+| 4 | `pkg/registry/registry.go` | Import package + `r.Register(...)` |
+| 5 | Jira / verification | `DefaultJiraComponent` exists; `./ci-test-mapping jira-verify` clean |
+| 6 | Maintainer | Run **`make mapping`** (required before merge) |

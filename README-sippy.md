@@ -2,17 +2,19 @@
 
 This document is a **checklist for coding agents** (and humans) adding support in Sippy for a new **MY-CMP** product that publishes CI under the layered-product / lp-interop pattern (JUnit suite like `MY-CMP-lp-interop`, Prow jobs under `…-lp-interop-…`).
 
-Follow the steps in order. **Do not run any `make` commands** from automation; a maintainer must run them locally when noted below.
-
 ---
 
-## 0. Prerequisites: gather required information
+## Prerequisites: gather required information
 
 From `openshift/release` (or your team’s CI config), confirm:
 
 1. **Mapped `testSuites` component name** as it appears in imported test data (often `ProductName-lp-interop`, e.g. `OADP-lp-interop`). It must match **exactly** (case-sensitive) what you add to `testSuites`.
 2. **Stable substring of periodic name**, e.g. `-lp-interop-cr-<something>`. The variant registry matches **literal substrings** on the lowercased job name (first match wins).  
     * Whether you need **multiple** patterns (e.g. `-lp-interop-cr-acs` vs `-lp-interop-cr-acs-latest`)—add **separate** rows, **more specific before more general**.
+
+## Note for AI / automation assistants
+
+Do **not** run any `make` commands (or substitute commands) in this repository on behalf of the user. A maintainer must run them locally when noted below.
 
 ---
 
